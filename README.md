@@ -7,9 +7,9 @@
 ## Group Members
 | Student | Name | Student No. | GitHub username | Responsibility |
 |---------|------|-------------|-----------------|----------------|
-| 1 | | Employee Management |
+| 1 | | | |Employee Management |
 | 2 | | | | Budget Management |
-| 3 || | | Supplier Management |
+| 3 | | | | Supplier Management |
 | 4 | | | | Asset Management |
 | 5 | | | | Reports |
 | 6 | | | | Functions, integration and validation |
