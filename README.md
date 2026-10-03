@@ -8,7 +8,7 @@
 | Student | Name | Student No. | GitHub username | Responsibility |
 |---------|------|-------------|-----------------|----------------|
 | 1 | | | |Employee Management |
-| 2 | | | | Budget Management |
+| 2 |Charlton Draghoender |211082066 |211082066-Draghoender | Budget Management |
 | 3 | | | | Supplier Management |
 | 4 | | | | Asset Management |
 | 5 | | | | Reports |
