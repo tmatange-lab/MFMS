@@ -5,14 +5,16 @@
 
 #define DEPT_LEN 30
 
+/* Arrays: i holds the data of department i. */
 static char deptName[MAX_DEPARTMENTS][DEPT_LEN];
 static float deptAllocated[MAX_DEPARTMENTS];
 static float deptSpent[MAX_DEPARTMENTS];
 static int deptCount = 0;
 
+/* --- Calculations --- */
 float calculateRemaining(float allocated, float spent)
 {
-    return allocated - spent;
+    return allocated - spent; /* negative will appear when overspending */
 }
 
 int isWithinBudget(float allocated, float spent)
@@ -45,6 +47,7 @@ static void printDepartment(int i)
                : "OVER BUDGET");
 }
 
+/* --- Menu --- */
 void addDepartmentBudget(void)
 {
     char name[DEPT_LEN];
@@ -90,7 +93,7 @@ void recordExpenditure(void)
     }
 
     amount = readFloat("Expenditure to record: N$", 0.0f);
-    deptSpent[index] += amount;
+    deptSpent[index] += amount; /* adds to what was spent earlier */
 
     if (!isWithinBudget(deptAllocated[index], deptSpent[index]))
         printf("WARNING: %s has exceeded its budget!\n", deptName[index]);
@@ -127,7 +130,7 @@ void displayExceededDepartments(void)
     if (!found)
         printf("  None. All departments are within budget.\n");
 }
-
+/* --- Statistics for Reports --- */
 int getDepartmentCount(void)
 {
     return deptCount;
@@ -192,7 +195,7 @@ double getBudgetExpenditure(int index)
         return 0.0;
     return deptSpent[index];
 }
-
+/* --- Menu --- */
 void budgetMenu(void)
 {
     int choice;
