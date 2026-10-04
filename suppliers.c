@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "suppliers.h"
+#include "suppliers.h" 
+#include "validation.h"
+
 const int maxSuppliers = 50;
 char supplierIds[50][10];
 char supplierNames[50][100];
@@ -12,6 +14,7 @@ int supplierCount = 0;
 void readSupplierInput(void) { fgets(supplierInput, sizeof(supplierInput), stdin); supplierInput[strcspn(supplierInput, "\n")] = '\0'; }
 char getSupplierChoice(void) { printf("Enter your choice: "); readSupplierInput(); if (strlen(supplierInput) == 1) { return supplierInput[0]; } return '?'; }
 int findSupplierById(char id[]) { for (int i = 0; i < supplierCount; i++) { if (strcmp(supplierIds[i], id) == 0) { return i; } } return -1; }
+
 int supplierLengthOk(int size) {
     int length = strlen(supplierInput);
     if (length == 0) { printf("Error: input cannot be empty.\n"); return 0; }
@@ -19,6 +22,16 @@ int supplierLengthOk(int size) {
     return 1;
 }
 int supplierIdOk(void) { if (findSupplierById(supplierInput) == -1) { return 1; } printf("Error: that supplier ID already exists.\n"); return 0; }
+int supplierIdFormatOk(void) {
+    if (isValidSupplierID(supplierInput)) { return 1; }
+    printf("Error: ID must be the Letter S followed by digit  (example: S001).\n");
+    return 0;
+}
+int supplierTownOk(void) {
+    if (hasLetter(supplierInput)) { return 1; }
+    printf("Error: location must contain letters (example: Windhoek).\n");
+    return 0;
+}
 int supplierEmailOk(void) {
     int length = strlen(supplierInput), atPosition = -1, atCount = 0, dotAfterAt = 0, spaces = 0;
     for (int i = 0; i < length; i++) {
@@ -37,16 +50,14 @@ int supplierPhoneOk(void) {
 }
 void addSupplier(void) {
     if (supplierCount >= maxSuppliers) { printf("Supplier list is full.\n"); return; }
-    do { printf("Enter supplier ID (e.g. S001): "); readSupplierInput(); } while (!supplierLengthOk(10) || !supplierIdOk());
-    strcpy(supplierIds[supplierCount], supplierInput);
+    do { printf("Enter supplier ID (e.g. S001): "); readSupplierInput(); } while (!supplierLengthOk(10) || !supplierIdFormatOk() || !supplierIdOk());    strcpy(supplierIds[supplierCount], supplierInput);
     do { printf("Enter supplier name: "); readSupplierInput(); } while (!supplierLengthOk(100));
     strcpy(supplierNames[supplierCount], supplierInput);
     do { printf("Enter email: "); readSupplierInput(); } while (!supplierLengthOk(100) || !supplierEmailOk());
     strcpy(supplierEmails[supplierCount], supplierInput);
     do { printf("Enter phone (digits only): "); readSupplierInput(); } while (!supplierPhoneOk());
     strcpy(supplierPhones[supplierCount], supplierInput);
-    do { printf("Enter town/location: "); readSupplierInput(); } while (!supplierLengthOk(50));
-    strcpy(supplierTowns[supplierCount], supplierInput);
+    do { printf("Enter town/location: "); readSupplierInput(); } while (!supplierLengthOk(50) || !supplierTownOk());    strcpy(supplierTowns[supplierCount], supplierInput);
     supplierCount++;
     printf("Supplier added successfully.\n");
 }
