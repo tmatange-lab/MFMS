@@ -9,7 +9,7 @@
 |---------|------|-------------|-----------------|----------------|
 | 1 | | | |Employee Management |
 | 2 | | | | Budget Management |
-| 3 | | | | Supplier Management |
+| 3 |Leandro Stern |223123773 |RomeoLs7 | Supplier Management |
 | 4 | | | | Asset Management |
 | 5 | | | | Reports |
 | 6 | | | | Functions, integration and validation |
