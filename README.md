@@ -7,7 +7,7 @@
 ## Group Members
 | Student | Name | Student No. | GitHub username | Responsibility |
 |---------|------|-------------|-----------------|----------------|
-| 1 | | | |Employee Management |
+| 1 |Ryan Mowes |226079821 |226079821-Mowes |Employee Management |
 | 2 |Charlton Draghoender |211082066 |211082066-Draghoender | Budget Management |
 | 3 |Leandro Stern |223123773 |RomeoLs7 | Supplier Management |
 | 4 |Jayson Vries | 226073866|226073866-Vries | Asset Management |
