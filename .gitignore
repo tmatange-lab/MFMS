@@ -2,3 +2,4 @@
 *.exe
 mfms
 *.out
+.vscode/
