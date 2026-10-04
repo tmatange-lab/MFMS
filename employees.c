@@ -1,4 +1,3 @@
-feature/employees
 #include <stdio.h>
 #include <string.h>
 #include "employees.h"
@@ -225,4 +224,3 @@ void employeeMenu(void)
         }
     } while (choice != 4);
 }
- main
