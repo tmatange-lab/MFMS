@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,4 +81,29 @@ int readInt(const char *prompt, int min, int max)
         else
             return (int)value;
     }
+}
+
+/* Returns 1 if the string contains at least one letter */
+int hasLetter(const char *s)
+{
+    for (; *s != '\0'; s++) {
+        if (isalpha((unsigned char)*s))
+            return 1;
+    }
+    return 0;
+}
+
+/* Supplier ID format: capital S followed by 1 to 6 digits (e.g. S001) */
+int isValidSupplierID(const char *s)
+{
+    size_t i, digits = 0;
+
+    if (s[0] != 'S')
+        return 0;
+    for (i = 1; s[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)s[i]))
+            return 0;
+        digits++;
+    }
+    return digits >= 1 && digits <= 6;
 }
