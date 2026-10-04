@@ -4,12 +4,18 @@
  *
  * Reports: Employee, Budget, Supplier, Asset.
  *
- * Employee and budget data are read through "getter" functions that the
- * employees and budget modules provide (see employees.h and budget.h).
- * Supplier and asset reports reuse displaySuppliers() / displayAssets().
+ * The figures come from the other modules through their read-only
+ * "Reports module" functions:
+ *   employees.h : getEmployeeCount, getAverageSalary, getHighestSalary,
+ *                 getLowestSalary
+ *   budget.h    : getDepartmentCount, getTotalAllocated, getTotalExpenditure,
+ *                 getTotalRemaining, countExceededDepartments,
+ *                 displayBudgets, displayExceededDepartments
+ *   suppliers.h : displaySuppliers
+ *   assets.h    : getAssetCount, getAsset
  *
- * Concepts used: loops, if/else, switch, functions with parameters and
- * return values, and string functions (strlen, strncpy).
+ * Concepts used: loops, if/else, switch, functions with return values,
+ * and string handling (strlen).
  */
 #include <stdio.h>
 #include <string.h>
@@ -18,8 +24,6 @@
 #include "budget.h"
 #include "suppliers.h"
 #include "assets.h"
-
-#define NAME_BUF 100
 
 /* ---------------- helper functions (private to this file) ---------------- */
 
@@ -115,9 +119,7 @@ static int readChoice(int min, int max)
 void employeeReport(void)
 {
     int count = getEmployeeCount();
-    int i, highIdx = 0, lowIdx = 0;
-    double salary, total = 0.0, highest = 0.0, lowest = 0.0;
-    char highName[NAME_BUF], lowName[NAME_BUF], buf[32];
+    char buf[32];
 
     printTitle("EMPLOYEE REPORT");
 
@@ -126,44 +128,22 @@ void employeeReport(void)
         return;
     }
 
-    for (i = 0; i < count; i++) {
-        salary = getEmployeeSalary(i);
-        total += salary;
-
-        if (i == 0 || salary > highest) {
-            highest = salary;
-            highIdx = i;
-        }
-        if (i == 0 || salary < lowest) {
-            lowest = salary;
-            lowIdx = i;
-        }
-    }
-
-    strncpy(highName, getEmployeeName(highIdx), NAME_BUF - 1);
-    highName[NAME_BUF - 1] = '\0';
-    strncpy(lowName, getEmployeeName(lowIdx), NAME_BUF - 1);
-    lowName[NAME_BUF - 1] = '\0';
-
     printf("Total Employees : %d\n", count);
-    formatMoney(total / count, buf);
+    formatMoney(getAverageSalary(), buf);
     printf("Average Salary  : %s\n", buf);
-    formatMoney(highest, buf);
-    printf("Highest Salary  : %s  (%s)\n", buf, highName);
-    formatMoney(lowest, buf);
-    printf("Lowest Salary   : %s  (%s)\n", buf, lowName);
-    formatMoney(total, buf);
-    printf("Total Payroll   : %s\n", buf);
+    formatMoney(getHighestSalary(), buf);
+    printf("Highest Salary  : %s\n", buf);
+    formatMoney(getLowestSalary(), buf);
+    printf("Lowest Salary   : %s\n", buf);
 }
 
 /* ----------------------------- 2. BUDGET REPORT ----------------------------- */
 
 void budgetReport(void)
 {
-    int count = getBudgetCount();
-    int i, exceeded = 0;
-    double allocated, spent, totalAllocated = 0.0, totalSpent = 0.0;
-    char a[32], e[32], r[32];
+    int count = getDepartmentCount();
+    int exceeded;
+    char buf[32];
 
     printTitle("BUDGET REPORT");
 
@@ -172,45 +152,27 @@ void budgetReport(void)
         return;
     }
 
-    printf("%-20s %16s %16s %16s  %s\n",
-           "Department", "Allocated", "Expenditure", "Remaining", "Status");
-    printLine('-', 88);
+    printf("Total Departments : %d\n\n", count);
 
-    for (i = 0; i < count; i++) {
-        allocated = getBudgetAllocated(i);
-        spent = getBudgetExpenditure(i);
-        totalAllocated += allocated;
-        totalSpent += spent;
+    /* every department with its allocation, spending and status */
+    displayBudgets();
 
-        formatMoney(allocated, a);
-        formatMoney(spent, e);
-        formatMoney(allocated - spent, r);
+    printf("\n");
+    printLine('-', 60);
+    formatMoney(getTotalAllocated(), buf);
+    printf("Total allocated budget : %s\n", buf);
+    formatMoney(getTotalExpenditure(), buf);
+    printf("Total expenditure      : %s\n", buf);
+    formatMoney(getTotalRemaining(), buf);
+    printf("Total remaining budget : %s\n", buf);
+    printLine('-', 60);
 
-        printf("%-20.20s %16s %16s %16s  %s\n",
-               getBudgetDepartment(i), a, e, r,
-               (spent > allocated) ? "OVER BUDGET" : "WITHIN BUDGET");
-    }
-    printLine('-', 88);
-
-    formatMoney(totalAllocated, a);
-    formatMoney(totalSpent, e);
-    formatMoney(totalAllocated - totalSpent, r);
-    printf("Total allocated budget : %s\n", a);
-    printf("Total expenditure      : %s\n", e);
-    printf("Total remaining budget : %s\n\n", r);
-
-    printf("Departments exceeding budget:\n");
-    for (i = 0; i < count; i++) {
-        allocated = getBudgetAllocated(i);
-        spent = getBudgetExpenditure(i);
-        if (spent > allocated) {
-            formatMoney(spent - allocated, r);
-            printf("  - %s (over by %s)\n", getBudgetDepartment(i), r);
-            exceeded++;
-        }
-    }
-    if (exceeded == 0) {
-        printf("  None - all departments are within budget.\n");
+    exceeded = countExceededDepartments();
+    printf("Departments exceeding budget: %d\n", exceeded);
+    if (exceeded > 0) {
+        displayExceededDepartments();
+    } else {
+        printf("None - all departments are within budget.\n");
     }
 }
 
@@ -226,8 +188,38 @@ void supplierReport(void)
 
 void assetReport(void)
 {
+    int count = getAssetCount();
+    int i;
+    double totalValue = 0.0;
+    const struct Asset *a;
+    char buf[32];
+
     printTitle("ASSET REPORT");
-    displayAssets();
+
+    if (count <= 0) {
+        printf("No assets have been registered yet.\n");
+        return;
+    }
+
+    printf("%-8s %-20s %-12s %16s  %-14s %-10s\n",
+           "ID", "Asset", "Type", "Purchase Value", "Department", "Condition");
+    printLine('-', 88);
+
+    for (i = 0; i < count; i++) {
+        a = getAsset(i);
+        if (a == NULL) {
+            continue;
+        }
+        totalValue += a->value;
+        formatMoney(a->value, buf);
+        printf("%-8.8s %-20.20s %-12.12s %16s  %-14.14s %-10.10s\n",
+               a->id, a->name, a->type, buf, a->department, a->condition);
+    }
+    printLine('-', 88);
+
+    formatMoney(totalValue, buf);
+    printf("Total assets registered : %d\n", count);
+    printf("Total purchase value    : %s\n", buf);
 }
 
 /* ------------------------------ REPORTS MENU ------------------------------- */
