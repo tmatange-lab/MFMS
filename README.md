@@ -11,8 +11,8 @@
 | 2 |Charlton Draghoender |211082066 |211082066-Draghoender | Budget Management |
 | 3 | | | | Supplier Management |
 | 4 |Jayson Vries | 226073866|226073866-Vries | Asset Management |
-| 5 | | | | Reports |
-| 6 | | | | Functions, integration and validation |
+| 5 |Mariaman Niizimba |2240222490 | MariamaNathalia | Reports |
+| 6 |Mapenzi Chimana |223011002|DRMapz| Functions, integration and validation |
 | 7 |Trevor Matange |226004821 |tmatange-lab | Testing, documentation and Git coordination |
 
 ## Project Description
