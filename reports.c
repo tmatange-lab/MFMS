@@ -1,22 +1,4 @@
-/*
- * reports.c - Reports module (Section 8 of the Project A brief)
- * MFMS - Municipal Financial Management System
- *
- * Reports: Employee, Budget, Supplier, Asset.
- *
- * The figures come from the other modules through their read-only
- * "Reports module" functions:
- *   employees.h : getEmployeeCount, getAverageSalary, getHighestSalary,
- *                 getLowestSalary
- *   budget.h    : getDepartmentCount, getTotalAllocated, getTotalExpenditure,
- *                 getTotalRemaining, countExceededDepartments,
- *                 displayBudgets, displayExceededDepartments
- *   suppliers.h : displaySuppliers
- *   assets.h    : getAssetCount, getAsset
- *
- * Concepts used: loops, if/else, switch, functions with return values,
- * and string handling (strlen).
- */
+
 #include <stdio.h>
 #include <string.h>
 #include "reports.h"
@@ -44,8 +26,6 @@ static void printTitle(const char *title)
     printLine('=', 60);
 }
 
-/* Turn an amount into text such as "N$18,500.00" (with thousands commas).
- * 'out' must hold at least 32 characters. */
 static void formatMoney(double amount, char *out)
 {
     char digits[32];
@@ -58,14 +38,14 @@ static void formatMoney(double amount, char *out)
         negative = 1;
         amount = -amount;
     }
-    cents = (long long)(amount * 100.0 + 0.5);   /* round to nearest cent */
+    cents = (long long)(amount * 100.0 + 0.5); 
     whole = cents / 100;
     frac  = (int)(cents % 100);
 
     sprintf(digits, "%lld", whole);
     len = (int)strlen(digits);
 
-    /* build the digits backwards, inserting a comma after every 3 digits */
+
     for (i = len - 1; i >= 0; i--) {
         if (g == 3) {
             grouped[pos++] = ',';
@@ -76,7 +56,7 @@ static void formatMoney(double amount, char *out)
     }
     grouped[pos] = '\0';
 
-    /* flip it back the right way round */
+
     for (i = 0; i < pos / 2; i++) {
         char tmp = grouped[i];
         grouped[i] = grouped[pos - 1 - i];
@@ -86,8 +66,7 @@ static void formatMoney(double amount, char *out)
     sprintf(out, "%sN$%s.%02d", negative ? "-" : "", grouped, frac);
 }
 
-/* Read a menu choice between min and max. Keeps asking until it is valid.
- * Returns max if input ends (EOF) so the menu can never loop forever. */
+
 static int readChoice(int min, int max)
 {
     int value, c;
@@ -99,13 +78,13 @@ static int readChoice(int min, int max)
                 return max;
             }
             while ((c = getchar()) != '\n' && c != EOF) {
-                ;   /* throw away the bad input */
+                ;  
             }
             printf("Invalid choice. Please enter a number from %d to %d.\n", min, max);
             continue;
         }
         while ((c = getchar()) != '\n' && c != EOF) {
-            ;       /* throw away the rest of the line */
+            ;      
         }
         if (value >= min && value <= max) {
             return value;
@@ -154,7 +133,7 @@ void budgetReport(void)
 
     printf("Total Departments : %d\n\n", count);
 
-    /* every department with its allocation, spending and status */
+
     displayBudgets();
 
     printf("\n");
