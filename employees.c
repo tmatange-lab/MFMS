@@ -8,7 +8,7 @@
 #define NAME_LEN 50
 #define DEPT_LEN 30
 
-/* ---- Simplified payroll rules */
+/* ---- Simplified payroll rules ---- */
 #define SSC_RATE 0.009f          /* 0.9% of basic salary */
 #define SSC_CAP  81.0f           /* maximum SSC per month */
 
