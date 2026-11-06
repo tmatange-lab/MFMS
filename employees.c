@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "employees.h"
 #include "validation.h"
 
@@ -66,6 +67,21 @@ static int findById(const char *id)
     return -1;
 }
 
+static int isLettersAndSpaces(const char *text)
+{
+    int foundLetter = 0;
+
+    for (; *text != '\0'; text++) {
+        unsigned char ch = (unsigned char)*text;
+        if (isalpha(ch))
+            foundLetter = 1;
+        else if (!isspace(ch))
+            return 0;
+    }
+
+    return foundLetter;
+}
+
 static void printEmployeeRow(int i)
 {
     float gross = calculateGross(empBasic[i], empHousing[i], empTransport[i]);
@@ -110,8 +126,18 @@ void addEmployee(void)
     }
 
     strcpy(empId[empCount], id);
-    readText("Full name: ", empName[empCount], NAME_LEN);
-    readText("Department: ", empDept[empCount], DEPT_LEN);
+    do {
+        readText("Full name: ", empName[empCount], NAME_LEN);
+        if (!isLettersAndSpaces(empName[empCount]))
+            printf("  Name must contain letters and spaces only.\n");
+    } while (!isLettersAndSpaces(empName[empCount]));
+
+    do {
+        readText("Department: ", empDept[empCount], DEPT_LEN);
+        if (!isLettersAndSpaces(empDept[empCount]))
+            printf("  Department must contain letters and spaces only.\n");
+    } while (!isLettersAndSpaces(empDept[empCount]));
+
     empBasic[empCount]     = readFloat("Basic salary: N$", 0.0f);
     empHousing[empCount]   = readFloat("Housing allowance: N$", 0.0f);
     empTransport[empCount] = readFloat("Transport allowance: N$", 0.0f);
